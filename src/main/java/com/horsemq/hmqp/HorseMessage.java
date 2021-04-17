@@ -42,10 +42,10 @@ public class HorseMessage {
     public byte type;
 
     /**
-     * Content type code.
+     * Content type code. Max value is 65535 (unsigned short)
      * May be useful to know how content should be read, convert, serialize/deserialize.
      */
-    public short contentType;
+    public int contentType;
 
     //endregion
 
@@ -110,7 +110,7 @@ public class HorseMessage {
      * Source may be client id or queue name.
      */
     public String getSource() {
-        return _target;
+        return _source;
     }
 
     /**
@@ -243,6 +243,10 @@ public class HorseMessage {
 
     public ByteBuffer getContent() {
         return _content;
+    }
+
+    public void setContent(ByteBuffer value) {
+        _content = value;
     }
 
     //endregion

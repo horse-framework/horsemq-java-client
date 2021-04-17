@@ -5,14 +5,14 @@ import com.horsemq.hmqp.HorseMessage;
 
 public class HorseResult {
 
-    private final short _code;
+    private final int _code;
     protected String _reason;
     protected HorseMessage _message;
 
     /**
      * Result code
      */
-    public short getCode() {
+    public int getCode() {
         return _code;
     }
 
@@ -33,7 +33,7 @@ public class HorseResult {
     /**
      * Creates new result without reason
      */
-    public HorseResult(short code) {
+    public HorseResult(int code) {
         _code = code;
         _reason = null;
     }
@@ -41,7 +41,7 @@ public class HorseResult {
     /**
      * Creates new result with a reason
      */
-    public HorseResult(short code, String reason) {
+    public HorseResult(int code, String reason) {
         _code = code;
         _reason = reason;
     }
@@ -49,7 +49,7 @@ public class HorseResult {
     /**
      * Creates new result with a reason
      */
-    public HorseResult(short code, HorseMessage message) {
+    public HorseResult(int code, HorseMessage message) {
         _code = code;
         _message = message;
 

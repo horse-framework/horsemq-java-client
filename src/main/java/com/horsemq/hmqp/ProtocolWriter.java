@@ -33,7 +33,7 @@ public class ProtocolWriter {
     private void writeFrame(HorseMessage message, SocketChannel channel, boolean hasHeaders) throws Exception {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-        byte proto = message.type;
+        int proto = message.type;
 
         if (message.waitResponse)
             proto += 128;
@@ -43,11 +43,11 @@ public class ProtocolWriter {
             proto += 32;
 
         byte reserved = 0;
-        byte[] frame = {proto, reserved, (byte) message.getMessageIdLength(), (byte) message.getSourceLength(), (byte) message.getTargetLength()};
+        byte[] frame = {(byte)proto, reserved, (byte) message.getMessageIdLength(), (byte) message.getSourceLength(), (byte) message.getTargetLength()};
         stream.write(frame);
 
-        byte[] contentType = ByteBuffer.allocate(2).putShort(message.contentType).array();
-        stream.write(new byte[]{contentType[1], contentType[0]}); //we need small endian
+        byte[] contentType = ByteBuffer.allocate(4).putInt(message.contentType).array();
+        stream.write(new byte[]{contentType[3], contentType[2]}); //we need small endian
 
         long length = message.getMessageLength();
         if (length > 0)
