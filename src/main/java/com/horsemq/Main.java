@@ -9,7 +9,7 @@ public class Main {
         HorseClient client = new HorseClient();
         boolean connected = client.connect("hmq://localhost:9999");
 
-        HorseResult result = client.getQueueOperator().subscribe("jqueue1", false);
+        HorseResult result = client.getQueueOperator().subscribe("jqueue1", true);
         System.out.println("Subscription: " + result.getCode());
 
         while (true) {

@@ -50,8 +50,7 @@ public class ProtocolWriter {
         stream.write(new byte[]{contentType[3], contentType[2]}); //we need small endian
 
         long length = message.getMessageLength();
-        if (length > 0)
-            writeMessageLength(stream, length);
+        writeMessageLength(stream, length);
 
         if (message.getMessageIdLength() > 0) {
             String id = message.getMessageId();

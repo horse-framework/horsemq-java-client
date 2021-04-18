@@ -3,7 +3,6 @@ package com.horsemq.hmqp;
 import com.github.javaparser.utils.Pair;
 import com.horsemq.helpers.ByteHelper;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
@@ -11,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 public class ProtocolReader {
 
     private final ByteBuffer _frameBuffer = ByteBuffer.allocate(8);
-    private final ByteBuffer _octetBuffer = ByteBuffer.allocate(255);
 
     public HorseMessage read(SocketChannel channel) throws Exception {
 
@@ -21,7 +19,8 @@ public class ProtocolReader {
         if (headerAndLength.a)
             readHeaders(channel, message);
 
-        readContent(channel, message, headerAndLength.b);
+        if (headerAndLength.b > 0)
+            readContent(channel, message, headerAndLength.b);
 
         return message;
     }
@@ -68,9 +67,14 @@ public class ProtocolReader {
         int sourceLength = ByteHelper.getUnsigned(bytes[3]);
         int targetLength = ByteHelper.getUnsigned(bytes[4]);
 
-        message.setMessageId(readOctetString(channel, messageIdLength));
-        message.setSource(readOctetString(channel, sourceLength));
-        message.setTarget(readOctetString(channel, targetLength));
+        if (messageIdLength > 0)
+            message.setMessageId(readOctetString(channel, messageIdLength));
+
+        if (sourceLength > 0)
+            message.setSource(readOctetString(channel, sourceLength));
+
+        if (targetLength > 0)
+            message.setTarget(readOctetString(channel, targetLength));
 
         return new Pair<>(hasHeader, length);
     }
@@ -90,13 +94,14 @@ public class ProtocolReader {
     }
 
     private String readOctetString(SocketChannel channel, int length) throws Exception {
-        _octetBuffer.clear();
+
+        ByteBuffer buffer = ByteBuffer.allocate(length);
         int read = 0;
 
         while (read < length)
-            read += channel.read(_octetBuffer);
+            read += channel.read(buffer);
 
-        return new String(_octetBuffer.array(), 0, length, StandardCharsets.UTF_8);
+        return new String(buffer.array(), 0, length, StandardCharsets.UTF_8);
     }
 
     private void readHeaders(SocketChannel channel, HorseMessage message) throws Exception {
@@ -128,7 +133,7 @@ public class ProtocolReader {
 
         ByteBuffer buffer = ByteBuffer.allocate(length);
         int read = 0;
-        while (read<length)
+        while (read < length)
             read += channel.read(buffer);
 
         message.setContent(buffer);

@@ -174,6 +174,7 @@ public class HorseClient {
      */
     public HorseResult send(HorseMessage message) {
         try {
+            message.setSource(_uniqueId);
             _socket.write(message);
             return HorseResult.ok();
         } catch (Exception e) {
