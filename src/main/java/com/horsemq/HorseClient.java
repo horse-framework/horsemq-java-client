@@ -7,13 +7,10 @@ import com.horsemq.hmqp.*;
 import com.horsemq.operators.DirectOperator;
 import com.horsemq.operators.QueueOperator;
 import com.horsemq.operators.RouterOperator;
-
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Client class for Horse MQ Server.
@@ -32,7 +29,7 @@ public class HorseClient {
     private final DirectOperator _directOperator;
 
     private HorseSocket _socket;
-    private int _responseTimeoutSeconds = 15;
+    private int _responseTimeoutSeconds = 1500;
     private final MessageTracker _tracker = new MessageTracker();
 
     public String getUniqueId() {
@@ -203,7 +200,7 @@ public class HorseClient {
 
         try {
             HorseMessage response = future.get(_responseTimeoutSeconds, TimeUnit.SECONDS);
-            return new HorseResult(message.contentType, response);
+            return new HorseResult(response.contentType, response);
         } catch (Exception ex) {
             _tracker.release(id);
             return HorseResult.timeout();
