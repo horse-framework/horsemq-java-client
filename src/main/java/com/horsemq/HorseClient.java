@@ -7,6 +7,7 @@ import com.horsemq.hmqp.*;
 import com.horsemq.operators.DirectOperator;
 import com.horsemq.operators.QueueOperator;
 import com.horsemq.operators.RouterOperator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -126,6 +127,7 @@ public class HorseClient {
                 if (message.type == MessageType.QueueMessage) {
                     //a message is consumed from a queue
                     String queueName = message.getTarget();
+                    System.out.println("Queue " + queueName + ": " + message.getMessageId() + ": " + message.getContentAsString());
                 } else if (message.type == MessageType.Response) {
                     //response or ack message is received
                     //search tracking message by received message id in MessageTracker

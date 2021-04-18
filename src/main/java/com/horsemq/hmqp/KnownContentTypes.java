@@ -6,6 +6,11 @@ package com.horsemq.hmqp;
 public class KnownContentTypes {
 
     /**
+     * "0" Ok
+     */
+    public static final short Ok = 0;
+
+    /**
      * "500" Process failed
      */
     public static final short Failed = 1;
