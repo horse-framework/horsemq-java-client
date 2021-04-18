@@ -68,13 +68,13 @@ public class ProtocolReader {
         int targetLength = ByteHelper.getUnsigned(bytes[4]);
 
         if (messageIdLength > 0)
-            message.setMessageId(readOctetString(channel, messageIdLength));
+            message.setMessageId(readExactString(channel, messageIdLength));
 
         if (sourceLength > 0)
-            message.setSource(readOctetString(channel, sourceLength));
+            message.setSource(readExactString(channel, sourceLength));
 
         if (targetLength > 0)
-            message.setTarget(readOctetString(channel, targetLength));
+            message.setTarget(readExactString(channel, targetLength));
 
         return new Pair<>(hasHeader, length);
     }
@@ -93,7 +93,7 @@ public class ProtocolReader {
         }
     }
 
-    private String readOctetString(SocketChannel channel, int length) throws Exception {
+    private String readExactString(SocketChannel channel, int length) throws Exception {
 
         ByteBuffer buffer = ByteBuffer.allocate(length);
         int read = 0;

@@ -1,5 +1,6 @@
 package com.horsemq;
 
+import com.horsemq.helpers.EndpointResolver;
 import com.horsemq.hmqp.KnownContentTypes;
 
 import java.util.concurrent.CompletableFuture;

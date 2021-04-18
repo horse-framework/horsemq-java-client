@@ -3,11 +3,13 @@ package com.horsemq;
 import com.github.javaparser.utils.Pair;
 import com.horsemq.events.ConnectionStateListener;
 import com.horsemq.events.MessageListener;
+import com.horsemq.helpers.EndpointResolver;
 import com.horsemq.hmqp.*;
 import com.horsemq.operators.DirectOperator;
 import com.horsemq.operators.QueueOperator;
 import com.horsemq.operators.RouterOperator;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -105,7 +107,12 @@ public class HorseClient {
         return java.util.UUID.randomUUID().toString().replace("-", "");
     }
 
-    public boolean connect(String hostname) {
+    public boolean connect(String hostname) throws UnknownHostException {
+        HorseEndpoint endpoint = EndpointResolver.resolve(hostname);
+        return connect(endpoint);
+    }
+
+    public boolean connect(HorseEndpoint endpoint) {
         disconnect();
 
         List<Pair<String, String>> properties = new ArrayList<>();
@@ -116,7 +123,7 @@ public class HorseClient {
         if (_token != null && _token.length() > 0)
             properties.add(new Pair<>(HorseHeaders.CLIENT_TOKEN, _token));
 
-        _socket = new HorseSocket(hostname, properties);
+        _socket = new HorseSocket(endpoint, properties);
 
         _socket.setMessageListener(new MessageListener() {
             @Override

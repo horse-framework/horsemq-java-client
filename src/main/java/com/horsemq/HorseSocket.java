@@ -16,9 +16,7 @@ import java.util.Locale;
 
 public class HorseSocket {
 
-    private final String _host;
-    private final int _port;
-    private final boolean _isSecureConnection;
+    private HorseEndpoint _endpoint;
 
     private final ProtocolWriter _writer = new ProtocolWriter();
     private final ProtocolReader _reader = new ProtocolReader();
@@ -37,17 +35,9 @@ public class HorseSocket {
         _connectionListener = listener;
     }
 
-    public HorseSocket(String host, List<Pair<String, String>> properties) {
-        /* todo
-          resolve ip, port, ssl from full hostname.
-          hostname MUST be like hmq://domain.com:1234 or for SSL connection hmqs://domain.com:1236.
-          if isSecureConnection is true, SSLEngine SHOULD be used for SSL connection.
-         */
-
+    public HorseSocket(HorseEndpoint endpoint, List<Pair<String, String>> properties) {
+        _endpoint = endpoint;
         _properties = properties;
-        _host = "localhost";
-        _port = 9999;
-        _isSecureConnection = host.toLowerCase(Locale.ROOT).startsWith("hmqs");
     }
 
     public boolean isConnected() {
@@ -60,7 +50,7 @@ public class HorseSocket {
     public boolean connect() {
         try {
             _channel = SocketChannel.open();
-            _channel.connect(new InetSocketAddress(_host, _port));
+            _channel.connect(new InetSocketAddress(_endpoint.getAddress(), _endpoint.getPort()));
 
             while (!_channel.finishConnect()) {
                 //connecting..
